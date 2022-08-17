@@ -1,0 +1,52 @@
+body {
+  background-color: #1b1b1b;
+  -webkit-user-drag: none;
+}
+
+table {
+  margin: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+td {
+  width: 70px;
+  height: 70px;
+  padding: 0;
+  position: relative;
+}
+
+img {
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  position: absolute;
+  -webkit-user-drag: none;
+}
+
+span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  position: absolute;
+}
+
+.free {
+  background-color: green;
+}
+
+.oponent {
+  background-color: red;
+}
+
+.black-cell {
+  background-color: rgb(53, 34, 11);
+}
+
+.white-cell {
+  background-color: rgb(171, 129, 53);
+}
