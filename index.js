@@ -1,44 +1,44 @@
 const container = document.getElementById("root")
 const getInitBoard = () => [
-  [3, 5, 7, 9, 11, 7, 5, 3],
+  [-2, -3, -4, -5, -6, -4, -3, -2],
+  [-1, -1, -1, -1, -1, -1, -1, -1],
+  [0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0],
+  [0, 0, 0, 0, 0, 0, 0, 0],
   [1, 1, 1, 1, 1, 1, 1, 1],
-  [0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0],
-  [2, 2, 2, 2, 2, 2, 2, 2],
-  [4, 6, 8, 10, 12, 8, 6, 4],
+  [2, 3, 4, 5, 6, 4, 3, 2],
 ]
 
 const testBoard = [
+  [-2, -3, -4, 0, -6, -4, -3, -2],
+  [-1, -1, -1, -1, -1, -1, -1, -1],
   [0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 5, 0, 0],
-  [0, 0, 0, 5, 0, 6, 0, 0],
-  [0, 0, 0, 0, 0, 5, 0, 0],
-  [0, 0, 0, 0, 6, 0, 0, 0],
+  [0, 0, 0, 0, 0, -5, 0, 0],
+  [0, 0, 0, 5, 0, 0, 0, 0],
   [0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 0, 0, 0],
-  [0, 0, 0, 0, 0, 6, 0, 0],
+  [1, 1, 1, 1, 1, 1, 1, 1],
+  [2, 3, 4, 0, 6, 4, 3, 2],
 ]
 
 const X = 0,
   Y = 1,
   BOARD_SIZE = 8,
-  WHITE = 0,
-  BLACK = 1,
+  WHITE = 1,
+  BLACK = -1,
   FREE_CELL = 0,
-  PAWN_B = 1,
-  PAWN_W = 2,
-  ROOK_B = 3,
-  ROOK_W = 4,
-  KNIGHT_B = 5,
-  KNIGHT_W = 6,
-  BISHOP_B = 7,
-  BISHOP_W = 8,
-  QUEEN_B = 9,
-  QUEEN_W = 10,
-  KING_B = 11,
-  KING_W = 12
+  PAWN_B = -1,
+  PAWN_W = 1,
+  ROOK_B = -2,
+  ROOK_W = 2,
+  KNIGHT_B = -3,
+  KNIGHT_W = 3,
+  BISHOP_B = -4,
+  BISHOP_W = 4,
+  QUEEN_B = -5,
+  QUEEN_W = 5,
+  KING_B = -6,
+  KING_W = 6
 
 const PAWNS = [PAWN_B, PAWN_W]
 const KNIGHTS = [KNIGHT_B, KNIGHT_W]
@@ -164,8 +164,6 @@ const getNewMatrix = (size) =>
     .fill()
     .map(() => Array(size).fill(0))
 
-/////////////////////////////////////////////////////////////////
-
 const newGame = (initialBoard = getInitBoard(), playerTurn = WHITE) => {
   let board = getClone(initialBoard)
   let points = getNewMatrix(8)
@@ -176,9 +174,9 @@ const newGame = (initialBoard = getInitBoard(), playerTurn = WHITE) => {
 
   const getPiece = ([x, y]) => board[x][y]
 
-  const getPlayer = (piece) => piece % 2
+  const getPlayer = (piece) => Math.sign(piece)
 
-  const getOpponentPlayer = () => 1 - turn
+  const getOpponentPlayer = () => -1 * turn
 
   const isOpponent = (player) => player === getOpponentPlayer()
 
@@ -201,10 +199,13 @@ const newGame = (initialBoard = getInitBoard(), playerTurn = WHITE) => {
   const activateLine = ([x, y], [dx, dy]) => {
     const newCoords = [x + dx, y + dy]
     if (!isValidCoords(newCoords)) return
+
     const player = getPlayerFromCoords(newCoords)
     if (player === turn) return
-    if (isOpponent(player)) return activateCell(newCoords)
+
     activateCell(newCoords)
+    if (isOpponent(player)) return
+
     activateLine(newCoords, [dx, dy])
   }
 
@@ -282,7 +283,9 @@ const newGame = (initialBoard = getInitBoard(), playerTurn = WHITE) => {
 
   const isCellActive = ([x, y]) => points[x][y] > 0
 
-  const changeTurn = () => (turn = 1 - turn)
+  const changeTurn = () => {
+    turn = getOpponentPlayer()
+  }
 
   const isPieceActive = ([x, y]) => activePiece[X] === x && activePiece[Y] === y
 
@@ -310,7 +313,7 @@ const newGame = (initialBoard = getInitBoard(), playerTurn = WHITE) => {
   }
 }
 
-const game = newGame()
+const game = newGame(testBoard)
 
 const click = (coords) => () => {
   const { board, points } = game.event(coords)
