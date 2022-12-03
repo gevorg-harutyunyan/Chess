@@ -90,49 +90,49 @@ const kingSteps = [
 
 const PIECES = {
   [PAWN_B]: {
-    img: "./images/pawn-black.svg",
+    img: "./images/black/pawn.svg",
     stepDirection: 1,
   },
   [PAWN_W]: {
-    img: "./images/pawn-white.svg",
+    img: "./images/white/pawn.svg",
     stepDirection: -1,
   },
   [ROOK_B]: {
-    img: "./images/rook-black.svg",
+    img: "./images/black/rook.svg",
     steps: rookSteps,
   },
   [ROOK_W]: {
-    img: "./images/rook-white.svg",
+    img: "./images/white/rook.svg",
     steps: rookSteps,
   },
   [KNIGHT_B]: {
-    img: "./images/knight-black.svg",
+    img: "./images/black/knight.svg",
   },
   [KNIGHT_W]: {
-    img: "./images/knight-white.svg",
+    img: "./images/white/knight.svg",
   },
   [BISHOP_B]: {
-    img: "./images/bishop-black.svg",
+    img: "./images/black/bishop.svg",
     steps: bishopSteps,
   },
   [BISHOP_W]: {
-    img: "./images/bishop-white.svg",
+    img: "./images/white/bishop.svg",
     steps: bishopSteps,
   },
   [QUEEN_B]: {
-    img: "./images/queen-black.svg",
+    img: "./images/black/queen.svg",
     steps: [...rookSteps, ...bishopSteps],
   },
   [QUEEN_W]: {
-    img: "./images/queen-white.svg",
+    img: "./images/white/queen.svg",
     steps: [...rookSteps, ...bishopSteps],
   },
   [KING_B]: {
-    img: "./images/king-black.svg",
+    img: "./images/black/king.svg",
     steps: kingSteps,
   },
   [KING_W]: {
-    img: "./images/king-white.svg",
+    img: "./images/white/king.svg",
     steps: kingSteps,
   },
 }
@@ -163,7 +163,6 @@ const getNewMatrix = (size) =>
   Array(size)
     .fill()
     .map(() => Array(size).fill(0))
-    
 
 /////////////////////////////////////////////////////////////////
 
