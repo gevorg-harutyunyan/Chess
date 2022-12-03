@@ -43,7 +43,7 @@ const X = 0,
 const PAWNS = [PAWN_B, PAWN_W]
 const KNIGHTS = [KNIGHT_B, KNIGHT_W]
 const KINGS = [KING_B, KING_W]
-const LONG_MOVEING_PIECES = [
+const LONG_MOVING_PIECES = [
   ROOK_B,
   ROOK_W,
   BISHOP_B,
@@ -137,14 +137,14 @@ const PIECES = {
   },
 }
 
-const isLongMoveingPiece = (piece) => LONG_MOVEING_PIECES.includes(piece)
+const isLongMovingPiece = (piece) => LONG_MOVING_PIECES.includes(piece)
 const isPawn = (piece) => PAWNS.includes(piece)
 const isKnight = (piece) => KNIGHTS.includes(piece)
 const isKing = (piece) => KINGS.includes(piece)
 
 const getClone = (data) => JSON.parse(JSON.stringify(data))
 const isFree = (value) => value === FREE_CELL
-const isCoordesEqual = (coords1, coords2) =>
+const isCoordsEqual = (coords1, coords2) =>
   coords1[X] === coords2[X] && coords1[Y] === coords2[Y]
 
 const getImage = (cell) => {
@@ -155,7 +155,7 @@ const getImage = (cell) => {
 
 const getPoint = (type) => {
   const point = document.createElement("span")
-  point.classList.add(type === 1 ? "free" : "oponent")
+  point.classList.add(type === 1 ? "free" : "opponent")
   return point
 }
 
@@ -190,7 +190,7 @@ const newGame = (initialBoard = getInitBoard(), playerTurn = WHITE) => {
 
   const isInRange = (value) => value < BOARD_SIZE && value > -1
 
-  const isValideCoords = ([x, y]) => isInRange(x) && isInRange(y)
+  const isValidCoords = ([x, y]) => isInRange(x) && isInRange(y)
 
   const addPoint = ([x, y], num) => (points[x][y] = num)
 
@@ -199,19 +199,19 @@ const newGame = (initialBoard = getInitBoard(), playerTurn = WHITE) => {
     addPoint(coords, 2)
   }
 
-  const activateԼine = ([x, y], [dx, dy]) => {
+  const activateLine = ([x, y], [dx, dy]) => {
     const newCoords = [x + dx, y + dy]
-    if (!isValideCoords(newCoords)) return
+    if (!isValidCoords(newCoords)) return
     const player = getPlayerFromCoords(newCoords)
     if (player === turn) return
     if (isOpponent(player)) return activateCell(newCoords)
     activateCell(newCoords)
-    activateԼine(newCoords, [dx, dy])
+    activateLine(newCoords, [dx, dy])
   }
 
-  const activateLongMoveingPiece = (piece, [x, y]) => {
+  const activateLongMovingPiece = (piece, [x, y]) => {
     PIECES[piece].steps.forEach((step) => {
-      activateԼine([x, y], step)
+      activateLine([x, y], step)
     })
   }
 
@@ -252,7 +252,7 @@ const newGame = (initialBoard = getInitBoard(), playerTurn = WHITE) => {
   const activateKnight = ([x, y]) => {
     knightSteps.forEach(([dx, dy]) => {
       const newCoords = [x + dx, y + dy]
-      if (isValideCoords(newCoords) && getPlayerFromCoords(newCoords) !== turn)
+      if (isValidCoords(newCoords) && getPlayerFromCoords(newCoords) !== turn)
         activateCell(newCoords)
     })
   }
@@ -260,8 +260,8 @@ const newGame = (initialBoard = getInitBoard(), playerTurn = WHITE) => {
   const activatePiece = ([x, y]) => {
     activePiece = [x, y]
     const piece = board[x][y]
-    if (isLongMoveingPiece(piece)) {
-      activateLongMoveingPiece(piece, [x, y])
+    if (isLongMovingPiece(piece)) {
+      activateLongMovingPiece(piece, [x, y])
     } else if (isPawn(piece)) {
       activatePawn([x, y])
     } else if (isKnight(piece)) {
