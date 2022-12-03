@@ -1,4 +1,3 @@
-const container = document.getElementById("root")
 const getInitBoard = () => [
   [-2, -3, -4, -5, -6, -4, -3, -2],
   [-1, -1, -1, -1, -1, -1, -1, -1],
@@ -147,18 +146,6 @@ const isFree = (value) => value === FREE_CELL
 const isCoordsEqual = (coords1, coords2) =>
   coords1[X] === coords2[X] && coords1[Y] === coords2[Y]
 
-const getImage = (cell) => {
-  const img = document.createElement("img")
-  img.src = PIECES[cell].img
-  return img
-}
-
-const getPoint = (type) => {
-  const point = document.createElement("span")
-  point.classList.add(type === 1 ? "free" : "opponent")
-  return point
-}
-
 const getNewMatrix = (size) =>
   Array(size)
     .fill()
@@ -170,9 +157,9 @@ const newGame = (initialBoard = getInitBoard(), playerTurn = WHITE) => {
   let activePiece = [null, null]
   let turn = playerTurn
 
-  const isFree = ([x, y]) => board[x][y] === FREE_CELL
-
   const getPiece = ([x, y]) => board[x][y]
+
+  const isCoordsFree = ([x, y]) => isFree(getPiece([x, y]))
 
   const getPlayer = (piece) => Math.sign(piece)
 
@@ -181,7 +168,7 @@ const newGame = (initialBoard = getInitBoard(), playerTurn = WHITE) => {
   const isOpponent = (player) => player === getOpponentPlayer()
 
   const getPlayerFromCoords = (coords) => {
-    if (isFree(coords)) return null
+    if (isCoordsFree(coords)) return null
     return getPlayer(getPiece(coords))
   }
 
@@ -192,7 +179,7 @@ const newGame = (initialBoard = getInitBoard(), playerTurn = WHITE) => {
   const addPoint = ([x, y], num) => (points[x][y] = num)
 
   const activateCell = (coords) => {
-    if (isFree(coords)) return addPoint(coords, 1)
+    if (isCoordsFree(coords)) return addPoint(coords, 1)
     addPoint(coords, 2)
   }
 
@@ -236,10 +223,10 @@ const newGame = (initialBoard = getInitBoard(), playerTurn = WHITE) => {
   const activatePawnStepsCoords = (piece, [x, y]) => {
     const direction = PIECES[piece].stepDirection
     const stepOneCoords = [x + 1 * direction, y]
-    if (!isFree(stepOneCoords)) return
+    if (!isCoordsFree(stepOneCoords)) return
     activateCell(stepOneCoords)
     const stepTwoCoords = [x + 2 * direction, y]
-    if (isPawnInInitCoords([x, y]) && isFree(stepTwoCoords))
+    if (isPawnInInitCoords([x, y]) && isCoordsFree(stepTwoCoords))
       activateCell(stepTwoCoords)
   }
 
@@ -313,25 +300,30 @@ const newGame = (initialBoard = getInitBoard(), playerTurn = WHITE) => {
   }
 }
 
-const game = newGame(testBoard)
-
-const click = (coords) => () => {
-  const { board, points } = game.event(coords)
-  renderMatrix(container, board, points)
+const getImage = (cell) => {
+  const img = document.createElement("img")
+  img.src = PIECES[cell].img
+  return img
 }
 
-const renderMatrix = (container, board, points) => {
-  // console.log("Rendered")
+const getPoint = (type) => {
+  const point = document.createElement("span")
+  point.classList.add(type === 1 ? "free" : "opponent")
+  return point
+}
+
+const renderGame = (container, game, onClick) => {
   container.innerHTML = ""
   const table = document.createElement("table")
-  board.forEach((row, i) => {
+  game.board.forEach((row, i) => {
     const tr = document.createElement("tr")
     row.forEach((cell, j) => {
       const td = document.createElement("td")
       td.classList.add((i + j) % 2 === 0 ? "white-cell" : "black-cell")
       if (!isFree(cell)) td.appendChild(getImage(cell))
-      if (points[i][j] !== 0) td.appendChild(getPoint(points[i][j]))
-      td.addEventListener("click", click([i, j]))
+      const pointNumber = game.points[i][j]
+      if (pointNumber !== 0) td.appendChild(getPoint(pointNumber))
+      td.addEventListener("click", onClick([i, j]))
       tr.appendChild(td)
     })
     table.appendChild(tr)
@@ -339,6 +331,11 @@ const renderMatrix = (container, board, points) => {
   container.appendChild(table)
 }
 
-const { board, points } = game.start()
+const game = newGame()
+const container = document.getElementById("root")
 
-renderMatrix(container, board, points)
+const click = (coords) => () => {
+  renderGame(container, game.event(coords), click)
+}
+
+renderGame(container, game.start(), click)
